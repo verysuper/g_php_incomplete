@@ -45,19 +45,20 @@ if (isset($_GET['accesscheck'])) {
 if (isset($_POST['user'])) {
   $loginUsername=$_POST['user'];
   $password=$_POST['password'];
-  $MM_fldUserAuthorization = "";
+  $MM_fldUserAuthorization = "admin";
   $MM_redirectLoginSuccess = "index.php";
   $MM_redirectLoginFailed = "index.php?msg=帳號密碼錯誤！！！";
   $MM_redirecttoReferrer = false;
   mysql_select_db($database_shop, $shop);
-  
-  $LoginRS__query=sprintf("SELECT userid, password FROM `user` WHERE userid=%s AND password=%s",
-    GetSQLValueString($loginUsername, "text"), GetSQLValueString($password, "text")); 
+  	
+  $LoginRS__query=sprintf("SELECT userid, password, admin FROM `user` WHERE userid=%s AND password=%s",
+  GetSQLValueString($loginUsername, "text"), GetSQLValueString($password, "text")); 
    
   $LoginRS = mysql_query($LoginRS__query, $shop) or die(mysql_error());
   $loginFoundUser = mysql_num_rows($LoginRS);
   if ($loginFoundUser) {
-     $loginStrGroup = "";
+    
+    $loginStrGroup  = mysql_result($LoginRS,0,'admin');
     
 	if (PHP_VERSION >= 5.1) {session_regenerate_id(true);} else {session_regenerate_id();}
     //declare two session variables and assign them
