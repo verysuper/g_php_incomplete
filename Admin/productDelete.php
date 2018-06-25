@@ -1,50 +1,5 @@
 <?php require_once('../Connections/shop.php'); ?>
 <?php
-if (!isset($_SESSION)) {
-  session_start();
-}
-$MM_authorizedUsers = "Y";
-$MM_donotCheckaccess = "false";
-
-// *** Restrict Access To Page: Grant or deny access to this page
-function isAuthorized($strUsers, $strGroups, $UserName, $UserGroup) { 
-  // For security, start by assuming the visitor is NOT authorized. 
-  $isValid = False; 
-
-  // When a visitor has logged into this site, the Session variable MM_Username set equal to their username. 
-  // Therefore, we know that a user is NOT logged in if that Session variable is blank. 
-  if (!empty($UserName)) { 
-    // Besides being logged in, you may restrict access to only certain users based on an ID established when they login. 
-    // Parse the strings into arrays. 
-    $arrUsers = Explode(",", $strUsers); 
-    $arrGroups = Explode(",", $strGroups); 
-    if (in_array($UserName, $arrUsers)) { 
-      $isValid = true; 
-    } 
-    // Or, you may restrict access to only certain users based on their username. 
-    if (in_array($UserGroup, $arrGroups)) { 
-      $isValid = true; 
-    } 
-    if (($strUsers == "") && false) { 
-      $isValid = true; 
-    } 
-  } 
-  return $isValid; 
-}
-
-$MM_restrictGoTo = "index.php";
-if (!((isset($_SESSION['MM_Username'])) && (isAuthorized("",$MM_authorizedUsers, $_SESSION['MM_Username'], $_SESSION['MM_UserGroup'])))) {   
-  $MM_qsChar = "?";
-  $MM_referrer = $_SERVER['PHP_SELF'];
-  if (strpos($MM_restrictGoTo, "?")) $MM_qsChar = "&";
-  if (isset($_SERVER['QUERY_STRING']) && strlen($_SERVER['QUERY_STRING']) > 0) 
-  $MM_referrer .= "?" . $_SERVER['QUERY_STRING'];
-  $MM_restrictGoTo = $MM_restrictGoTo. $MM_qsChar . "accesscheck=" . urlencode($MM_referrer);
-  header("Location: ". $MM_restrictGoTo); 
-  exit;
-}
-?>
-<?php
 if (!function_exists("GetSQLValueString")) {
 function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDefinedValue = "") 
 {
@@ -76,11 +31,20 @@ function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDe
 }
 }
 
-mysql_select_db($database_shop, $shop);
-$query_productBrowser = "SELECT * FROM product ORDER BY id DESC";
-$productBrowser = mysql_query($query_productBrowser, $shop) or die(mysql_error());
-$row_productBrowser = mysql_fetch_assoc($productBrowser);
-$totalRows_productBrowser = mysql_num_rows($productBrowser);
+if ((isset($_GET['id'])) && ($_GET['id'] != "")) {
+  $deleteSQL = sprintf("DELETE FROM product WHERE id=%s",
+                       GetSQLValueString($_GET['id'], "int"));
+
+  mysql_select_db($database_shop, $shop);
+  $Result1 = mysql_query($deleteSQL, $shop) or die(mysql_error());
+
+  $deleteGoTo = "productBrowser.php";
+  if (isset($_SERVER['QUERY_STRING'])) {
+    $deleteGoTo .= (strpos($deleteGoTo, '?')) ? "&" : "?";
+    $deleteGoTo .= $_SERVER['QUERY_STRING'];
+  }
+  header(sprintf("Location: %s", $deleteGoTo));
+}
  session_start(); ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -171,27 +135,14 @@ $totalRows_productBrowser = mysql_num_rows($productBrowser);
   </object>
 <div id="container"><!-- InstanceBeginEditable name="EditRegion1" -->
   <div id="primaryContent">
-    <h2>商品瀏覽</h2>
-    <h3>提供所有商品進行分頁瀏覽。</h3>
+    <h2>產品刪除</h2>
+	<h5>此筆記錄已刪除，3秒後將自動轉向產品瀏覽頁面。</h5>
     <p>&nbsp;</p>
-    
-      <table border="1" width="100%">
-        <tr>
-          <th scope="col"><p>商品編號</p></th>
-          <th scope="col"><p>商品名稱</p></th>
-          <th align="right" scope="col"><p>庫存量</p></th>
-          <th align="right" scope="col"><p>單價</p></th>
-          <th align="center" scope="col"><p>功能</p></th>
-        </tr>
-        <?php do { ?><tr>
-          <td><?php echo $row_productBrowser['id']; ?></td>
-          <td><?php echo $row_productBrowser['name']; ?></td>
-          <td><?php echo $row_productBrowser['qty']; ?></td>
-          <td><?php echo $row_productBrowser['price']; ?></td>
-          <td><button onclick="location.href='productDelete.php?id=<?php echo $row_productBrowser['id']; ?>'">刪除</button></td>
-          </tr> <?php } while ($row_productBrowser = mysql_fetch_assoc($productBrowser)); ?>
-      </table>
-     
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
@@ -256,6 +207,3 @@ $totalRows_productBrowser = mysql_num_rows($productBrowser);
     </div><!-- /footer -->
 </body>
 <!-- InstanceEnd --></html>
-<?php
-mysql_free_result($productBrowser);
-?>
