@@ -169,6 +169,8 @@ $queryString_productList = sprintf("&totalRows_productList=%d%s", $totalRows_pro
         [<a href="<?php printf("%s?pageNum_productList=%d%s", $currentPage, max(0, $pageNum_productList - 1), $queryString_productList); ?>">上一頁</a>]
         [<a href="<?php printf("%s?pageNum_productList=%d%s", $currentPage, min($totalPages_productList, $pageNum_productList + 1), $queryString_productList); ?>">下一頁</a>]
         [<a href="<?php printf("%s?pageNum_productList=%d%s", $currentPage, $totalPages_productList, $queryString_productList); ?>">最後一頁</a>]第 <?php echo ($startRow_productList + 1) ?> 筆至第 <?php echo min($startRow_productList + $maxRows_productList, $totalRows_productList) ?> 筆/共 <?php echo $totalRows_productList ?>  筆
+        <hr>
+        <p>&nbsp;</p>
     <?php do { ?>
       <table border="1" width="100%">
         <tr>
@@ -177,12 +179,12 @@ $queryString_productList = sprintf("&totalRows_productList=%d%s", $totalRows_pro
           </td>    		
           </tr>
         <tr>
-          <th align="right">商品名稱：</th>
-          <td><?php echo $row_productList['name']; ?></td>
+          <th align="right"><p>商品名稱：</p></th>
+          <td><h4><?php echo $row_productList['name']; ?></h4></td>
           </tr>
         <tr>
-          <th align="right">單價：</th>
-          <td><?php echo $row_productList['price']; ?></td>
+          <th align="right"><p>單價：</p></th>
+          <td><h5><del><?php echo $row_productList['price']; ?></del> <?php echo $row_productList['price']; ?></h5></td>
           </tr>
         <tr>
           <td colspan="2" align="center">
@@ -201,14 +203,7 @@ $queryString_productList = sprintf("&totalRows_productList=%d%s", $totalRows_pro
         [<a href="<?php printf("%s?pageNum_productList=%d%s", $currentPage, max(0, $pageNum_productList - 1), $queryString_productList); ?>">上一頁</a>]
         [<a href="<?php printf("%s?pageNum_productList=%d%s", $currentPage, min($totalPages_productList, $pageNum_productList + 1), $queryString_productList); ?>">下一頁</a>]
         [<a href="<?php printf("%s?pageNum_productList=%d%s", $currentPage, $totalPages_productList, $queryString_productList); ?>">最後一頁</a>]第 <?php echo ($startRow_productList + 1) ?> 筆至第 <?php echo min($startRow_productList + $maxRows_productList, $totalRows_productList) ?> 筆/共 <?php echo $totalRows_productList ?>  筆
-<p>&nbsp;</p>
-    <?php if ($totalRows_productList == 0) { // Show if recordset empty ?>
-      <table width="90%%" border="0">
-        <tr>
-          <th scope="col"><h5>資料庫目前尚無商品！</h5></th>
-        </tr>
-      </table>
-      <?php } // Show if recordset empty ?>
+	<p>&nbsp;</p>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
     <p>&nbsp;</p>

@@ -188,7 +188,7 @@ $totalRows_productBrowser = mysql_num_rows($productBrowser);
           <td><?php echo $row_productBrowser['name']; ?></td>
           <td><?php echo $row_productBrowser['qty']; ?></td>
           <td><?php echo $row_productBrowser['price']; ?></td>
-          <td><button onclick="location.href='productDelete.php?id=<?php echo $row_productBrowser['id']; ?>'">刪除</button></td>
+          <td><button onclick="if(confirm('您確認要刪除嗎?'))location.href='productDelete.php?id=<?php echo $row_productBrowser['id']; ?>'">刪除</button></td>
           </tr> <?php } while ($row_productBrowser = mysql_fetch_assoc($productBrowser)); ?>
       </table>
      

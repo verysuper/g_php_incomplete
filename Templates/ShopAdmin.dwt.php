@@ -125,10 +125,10 @@
     <h3>管理員登入</h3>
     <form action="loginCheck.php" method="post">
       <p>
-        <input value="user" name="user" />
+        <input value="user" name="user" placeholder="user" />
       </p>
       <p>
-        <input name="password" type="password" value="password" />
+        <input name="password" type="password" value="" placeholder="password" />
       </p>
       <p>
         <button type="submit">送出</button>

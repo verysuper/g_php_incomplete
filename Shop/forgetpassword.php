@@ -240,9 +240,10 @@ function sendmail($uid,$pwd,$mail){
 	$to      = $mail;
 	$subject = "=?UTF-8?B?".base64_encode("會員密碼通知函")."?=";
 	//透過md5(...)函式將會員帳號進行訊息數位演算，以提高複雜度
-	$message = "$uid 您好、這是您會員密碼通知：<br/><hr/><p>"
-			  ."會員帳號：$uid<br/>"
-			  ."會員密碼：$pwd<br/>";
+	$message = "$uid 您好、這是您會員密碼通知：<br/><hr/><p>".
+			  /*."會員帳號：$uid<br/>"
+			  ."會員密碼：$pwd<br/>"*/
+			  "http://localhost/php_incomplete/Shop/auth_password.php?uid=".md5($uid);
 	$headers  = "MIME-Version: 1.0\r\n";
 	$headers .= "Content-type: text/html; charset=utf-8\r\n";
 	$headers .= "From: services@pcschool.com.tw \r\n";
