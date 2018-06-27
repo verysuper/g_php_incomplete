@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<info>
+	<infoitem key="UD_ordersList" value="name:O_id;datatype:int,name:O_name;datatype:string,name:O_phone;datatype:string,name:O_cellphone;datatype:string,name:O_address;datatype:string,name:shipment;datatype:string,name:userid;datatype:string,name:orderDate;datatype:datetime" />
+</info>
