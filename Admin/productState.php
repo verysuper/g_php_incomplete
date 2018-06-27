@@ -31,44 +31,11 @@ function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDe
 }
 }
 
-$currentPage = $_SERVER["PHP_SELF"];
-
-$maxRows_productList = 10;
-$pageNum_productList = 0;
-if (isset($_GET['pageNum_productList'])) {
-  $pageNum_productList = $_GET['pageNum_productList'];
-}
-$startRow_productList = $pageNum_productList * $maxRows_productList;
-
 mysql_select_db($database_shop, $shop);
 $query_productList = "SELECT * FROM product ORDER BY id DESC";
-$query_limit_productList = sprintf("%s LIMIT %d, %d", $query_productList, $startRow_productList, $maxRows_productList);
-$productList = mysql_query($query_limit_productList, $shop) or die(mysql_error());
+$productList = mysql_query($query_productList, $shop) or die(mysql_error());
 $row_productList = mysql_fetch_assoc($productList);
-
-if (isset($_GET['totalRows_productList'])) {
-  $totalRows_productList = $_GET['totalRows_productList'];
-} else {
-  $all_productList = mysql_query($query_productList);
-  $totalRows_productList = mysql_num_rows($all_productList);
-}
-$totalPages_productList = ceil($totalRows_productList/$maxRows_productList)-1;
-
-$queryString_productList = "";
-if (!empty($_SERVER['QUERY_STRING'])) {
-  $params = explode("&", $_SERVER['QUERY_STRING']);
-  $newParams = array();
-  foreach ($params as $param) {
-    if (stristr($param, "pageNum_productList") == false && 
-        stristr($param, "totalRows_productList") == false) {
-      array_push($newParams, $param);
-    }
-  }
-  if (count($newParams) != 0) {
-    $queryString_productList = "&" . htmlentities(implode("&", $newParams));
-  }
-}
-$queryString_productList = sprintf("&totalRows_productList=%d%s", $totalRows_productList, $queryString_productList);
+$totalRows_productList = mysql_num_rows($productList);
  session_start(); ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -162,31 +129,7 @@ $queryString_productList = sprintf("&totalRows_productList=%d%s", $totalRows_pro
     <h2>商品上/下架處理</h2>
 	<h3>透過商品上/下架處理，可以決定商品目前是否提供訂購。</h3>
     <p>&nbsp;</p>
-    <table>
-      <tr>
-        <td><?php if ($pageNum_productList > 0) { // Show if not first page ?>
-            <a href="<?php printf("%s?pageNum_productList=%d%s", $currentPage, 0, $queryString_productList); ?>">第一頁</a>
-            <?php } // Show if not first page ?></td>
-        <td><?php if ($pageNum_productList > 0) { // Show if not first page ?>
-            <a href="<?php printf("%s?pageNum_productList=%d%s", $currentPage, max(0, $pageNum_productList - 1), 
-
-$queryString_productList); ?>">上一頁</a>
-            <?php } // Show if not first page ?></td>
-        <td><?php if ($pageNum_productList < $totalPages_productList) { // Show if not last page ?>
-            <a href="<?php printf("%s?pageNum_productList=%d%s", $currentPage, min($totalPages_productList, 
-
-$pageNum_productList + 1), $queryString_productList); ?>">下一頁</a>
-            <?php } // Show if not last page ?></td>
-        <td><?php if ($pageNum_productList < $totalPages_productList) { // Show if not last page ?>
-            <a href="<?php printf("%s?pageNum_productList=%d%s", $currentPage, $totalPages_productList, 
-
-$queryString_productList); ?>">最後一頁</a>
-            <?php } // Show if not last page ?></td>
-      </tr>
-    </table>
-記錄 第 <?php echo ($startRow_productList + 1) ?> 筆 到 第 <?php echo min($startRow_productList + $maxRows_productList, 
-
-$totalRows_productList) ?> 筆，共 <?php echo $totalRows_productList ?> 筆</p>
+    
     <?php if ($totalRows_productList > 0) { // Show if recordset not empty ?>
       <table width="100%" border="0" cellspacing="0" cellpadding="0">
         <tr>
@@ -201,8 +144,12 @@ $totalRows_productList) ?> 筆，共 <?php echo $totalRows_productList ?> 筆</p
             <td align="center"><h6><?php echo $row_productList['id']; ?></h6></td>
             <td><?php echo $row_productList['name']; ?></td>
             <td align="center"><h5><?php echo $row_productList['state']; ?></h5></td>
-            <td align="center"><button type="button">上架</button></td>
-            <td align="center"><button type="button">下架</button></td>
+            <td align="center">
+            	<button onclick="location.href='productStateProcess.php?id=<?php echo $row_productList['id']; ?>&MM_update=form1&state=1'">上架</button>
+            </td>
+            <td align="center">
+            	<button>下架</button>
+            </td>
           </tr>
           <?php } while ($row_productList = mysql_fetch_assoc($productList)); ?>
       </table>

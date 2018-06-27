@@ -1,4 +1,57 @@
-<?php session_start(); ?>
+<?php require_once('../Connections/shop.php'); ?>
+<?php
+if (!function_exists("GetSQLValueString")) {
+function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDefinedValue = "") 
+{
+  if (PHP_VERSION < 6) {
+    $theValue = get_magic_quotes_gpc() ? stripslashes($theValue) : $theValue;
+  }
+
+  $theValue = function_exists("mysql_real_escape_string") ? mysql_real_escape_string($theValue) : mysql_escape_string($theValue);
+
+  switch ($theType) {
+    case "text":
+      $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
+      break;    
+    case "long":
+    case "int":
+      $theValue = ($theValue != "") ? intval($theValue) : "NULL";
+      break;
+    case "double":
+      $theValue = ($theValue != "") ? doubleval($theValue) : "NULL";
+      break;
+    case "date":
+      $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
+      break;
+    case "defined":
+      $theValue = ($theValue != "") ? $theDefinedValue : $theNotDefinedValue;
+      break;
+  }
+  return $theValue;
+}
+}
+
+$editFormAction = $_SERVER['PHP_SELF'];
+if (isset($_SERVER['QUERY_STRING'])) {
+  $editFormAction .= "?" . htmlentities($_SERVER['QUERY_STRING']);
+}
+
+if ((isset($_GET["MM_update"])) && ($_GET["MM_update"] == "form1")) {
+  $updateSQL = sprintf("UPDATE product SET `state`=%s WHERE id=%s",
+                       GetSQLValueString($_GET['state'], "int"),
+                       GetSQLValueString($_GET['id'], "int"));
+
+  mysql_select_db($database_shop, $shop);
+  $Result1 = mysql_query($updateSQL, $shop) or die(mysql_error());
+
+  $updateGoTo = "productState.php?=更新成功";
+  if (isset($_SERVER['QUERY_STRING'])) {
+    $updateGoTo .= (strpos($updateGoTo, '?')) ? "&" : "?";
+    $updateGoTo .= $_SERVER['QUERY_STRING'];
+  }
+  header(sprintf("Location: %s", $updateGoTo));
+}
+ session_start(); ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/ShopAdmin.dwt.php" codeOutsideHTMLIsLocked="false" -->
@@ -91,8 +144,10 @@
     <h2>&nbsp;</h2>
     <h3>&nbsp;</h3>
     <p>&nbsp;</p>
-    <p>&nbsp;</p>
-    <p>&nbsp;</p>
+    <form method="POST" name="form1" action="<?php echo $editFormAction; ?>" id="form1">
+    	<input type="text" name="id"><input type="text" name="state">
+    	<input type="hidden" name="MM_update" value="form1" />
+    </form>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
