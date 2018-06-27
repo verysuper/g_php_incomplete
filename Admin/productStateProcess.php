@@ -44,12 +44,12 @@ if ((isset($_GET["MM_update"])) && ($_GET["MM_update"] == "form1")) {
   mysql_select_db($database_shop, $shop);
   $Result1 = mysql_query($updateSQL, $shop) or die(mysql_error());
 
-  $updateGoTo = "productState.php?=更新成功";
+  $updateGoTo = "productState.php";
   if (isset($_SERVER['QUERY_STRING'])) {
     $updateGoTo .= (strpos($updateGoTo, '?')) ? "&" : "?";
     $updateGoTo .= $_SERVER['QUERY_STRING'];
   }
-  header(sprintf("Location: %s", $updateGoTo));
+  header(sprintf("refresh:3;url= %s", $updateGoTo));
 }
  session_start(); ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -141,8 +141,9 @@ if ((isset($_GET["MM_update"])) && ($_GET["MM_update"] == "form1")) {
   </object>
 <div id="container"><!-- InstanceBeginEditable name="EditRegion1" -->
   <div id="primaryContent">
-    <h2>&nbsp;</h2>
-    <h3>&nbsp;</h3>
+    <h2>上下架處理</h2>
+    <h3>您的功能已啟動</h3>
+    <h5>三秒後返回...</h5>
     <p>&nbsp;</p>
     <form method="POST" name="form1" action="<?php echo $editFormAction; ?>" id="form1">
     	<input type="text" name="id"><input type="text" name="state">

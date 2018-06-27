@@ -148,7 +148,7 @@ $totalRows_productList = mysql_num_rows($productList);
             	<button onclick="location.href='productStateProcess.php?id=<?php echo $row_productList['id']; ?>&MM_update=form1&state=1'">上架</button>
             </td>
             <td align="center">
-            	<button>下架</button>
+            	<button onclick="location.href='productStateProcess.php?id=<?php echo $row_productList['id']; ?>&MM_update=form1&state=0'">下架</button>
             </td>
           </tr>
           <?php } while ($row_productList = mysql_fetch_assoc($productList)); ?>
