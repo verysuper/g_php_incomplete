@@ -41,7 +41,7 @@ if (isset($_GET['pageNum_productList'])) {
 $startRow_productList = $pageNum_productList * $maxRows_productList;
 
 mysql_select_db($database_shop, $shop);
-$query_productList = "SELECT * FROM product ORDER BY id DESC";
+$query_productList = "SELECT id, name, introduce, price, qty, `state` FROM product WHERE `state` = 1 ORDER BY id DESC";
 $query_limit_productList = sprintf("%s LIMIT %d, %d", $query_productList, $startRow_productList, $maxRows_productList);
 $productList = mysql_query($query_limit_productList, $shop) or die(mysql_error());
 $row_productList = mysql_fetch_assoc($productList);
