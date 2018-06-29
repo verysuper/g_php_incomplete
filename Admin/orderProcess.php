@@ -163,7 +163,6 @@ $totalRows_orderDetailsList = mysql_num_rows($orderDetailsList);
         </tr>
       </table>
       
-      
       <input type="hidden" name="state" value="Y">
       <input type="hidden" name="MM_update" value="form1">          
       

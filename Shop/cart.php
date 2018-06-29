@@ -1,64 +1,11 @@
-<?php require_once('../Connections/shop.php'); ?>
-<?php
-if (!function_exists("GetSQLValueString")) {
-function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDefinedValue = "") 
-{
-  if (PHP_VERSION < 6) {
-    $theValue = get_magic_quotes_gpc() ? stripslashes($theValue) : $theValue;
-  }
-
-  $theValue = function_exists("mysql_real_escape_string") ? mysql_real_escape_string($theValue) : mysql_escape_string($theValue);
-
-  switch ($theType) {
-    case "text":
-      $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
-      break;    
-    case "long":
-    case "int":
-      $theValue = ($theValue != "") ? intval($theValue) : "NULL";
-      break;
-    case "double":
-      $theValue = ($theValue != "") ? doubleval($theValue) : "NULL";
-      break;
-    case "date":
-      $theValue = ($theValue != "") ? "'" . $theValue . "'" : "NULL";
-      break;
-    case "defined":
-      $theValue = ($theValue != "") ? $theDefinedValue : $theNotDefinedValue;
-      break;
-  }
-  return $theValue;
-}
-}
-
-$editFormAction = $_SERVER['PHP_SELF'];
-if (isset($_SERVER['QUERY_STRING'])) {
-  $editFormAction .= "?" . htmlentities($_SERVER['QUERY_STRING']);
-}
-
-if ((isset($_POST["MM_update"])) && ($_POST["MM_update"] == "form1")) {
-  $updateSQL = sprintf("UPDATE orders SET shipment=%s WHERE O_id=%s",
-                       GetSQLValueString($_POST['state'], "text"),
-                       GetSQLValueString($_POST['oid'], "int"));
-
-  mysql_select_db($database_shop, $shop);
-  $Result1 = mysql_query($updateSQL, $shop) or die(mysql_error());
-
-  $updateGoTo = "orderForm.php";
-  if (isset($_SERVER['QUERY_STRING'])) {
-    $updateGoTo .= (strpos($updateGoTo, '?')) ? "&" : "?";
-    $updateGoTo .= $_SERVER['QUERY_STRING'];
-  }
-  header(sprintf("refresh:3;url= %s", $updateGoTo));
-}
- session_start(); ?>
+<?php session_start();?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/ShopAdmin.dwt.php" codeOutsideHTMLIsLocked="false" -->
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/Shop.dwt.php" codeOutsideHTMLIsLocked="false" -->
 <script language="javascript" src="../Scripts/menu.js"/></script>
 <head>
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>伴手網後台</title>
+<title>伴手網</title>
 <!-- InstanceEndEditable -->
 
 <!-- Meta Tags -->
@@ -84,7 +31,7 @@ if ((isset($_POST["MM_update"])) && ($_POST["MM_update"] == "form1")) {
       <div class="subContainer">
             <div id="logo">
             <div id="box">H2H</div>
-            <p>咱的好伴手後台</p>
+            <p>咱的好伴手</p>
             </div><!-- /logo -->
     </div><!-- /subContainer -->
 </div><!-- header -->
@@ -92,28 +39,31 @@ if ((isset($_POST["MM_update"])) && ($_POST["MM_update"] == "form1")) {
 <div id="navigation">   
 	<ul id="sddm">
         <li><a href="index.php">首頁</a></li>
-        <li><a href="productBrowser.php">商品瀏覽</a></li>        
+        <li><a href="product.php">商品資料</a></li>
+        <li><a href="cart.php">購物車</a></li>
+        <li><a href="checkOut.php">結帳</a></li>     
+        <li><a href="guestBook.php">留言板</a></li>        
+        <li><a href="titleView.php">討論區</a></li>
 	    <li><a href="#" 
         onmouseover="mopen('m1')" 
-        onmouseout="mclosetime()">商品管理</a>
+        onmouseout="mclosetime()">會員中心</a>
         <div id="m1" 
             onmouseover="mcancelclosetime()" 
             onmouseout="mclosetime()">
-        <a href="productState.php">商品上下架</a>
-        <a href="productAdd.php">商品新增</a>
+        <a href="reconfirm.php">重發確認信</a>
+        <a href="modifydata.php">修改基本資料</a>
+        <a href="forgetpassword.php">忘記密碼</a>
         </div>
-    	</li>        
-        <li><a href="orderForm.php">訂單處理</a></li>   
+    	</li>
 	    <li><a href="#" 
         onmouseover="mopen('m2')" 
-        onmouseout="mclosetime()">公佈欄管理</a>
+        onmouseout="mclosetime()">公佈欄</a>
         <div id="m2" 
             onmouseover="mcancelclosetime()" 
             onmouseout="mclosetime()">
-        <a href="publishBrowser.php">訊息瀏覽、維護</a>
-        <a href="publishAdd.php">訊息新增</a>
+        <a href="publishBrowser.php">瀏覽公佈欄</a>
         </div>
-    	</li>        
+    	</li>
 		</ul> 
 <div style="clear:both"></div>    
 </div><!-- /navigation -->
@@ -141,15 +91,40 @@ if ((isset($_POST["MM_update"])) && ($_POST["MM_update"] == "form1")) {
   </object>
 <div id="container"><!-- InstanceBeginEditable name="EditRegion1" -->
   <div id="primaryContent">
-    <h2>訂單出貨完成</h2>
-	<h5>該訂單已經完成出貨處理，畫面稍後自動轉回訂單處理。</h5>
+    <h2>購物車</h2>
+	<h3>底下將列出您所購買的商品。</h3>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
-    <form method="POST" name="form1" action="<?php echo $editFormAction; ?>" id="form1">
-    	<input type="hidden" name="oid">
-        <input type="hidden" name="state">
-        <input type="hidden" name="MM_update" value="form1" />
-    </form>
+    <table>
+    	<tr>
+    		<th width="15%" scope="col"><p>商品編號</p></th>
+        <th width="30%" scope="col"><p>商品名稱</p></th>
+        <th width="10%" scope="col"><p>數量</p></th>
+        <th width="15%" scope="col"><p>單價</p></th>
+        <th width="15%" scope="col"><p>小計</p></th>
+        <th width="15%" scope="col"><p>操作</p></th>
+    	</tr>
+    	<form method="get">
+      <tr>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td>
+            <button name="edit" value="更新" type="submit">更新</button>
+            <button value="移除" type="button">移除</button>
+        </td>
+      </tr>
+      </form>
+    	<tr>
+        <td colspan="6" align="center" valign="middle">
+        	<button value="清空購物車" type="button">清空購物車</button>
+            <button value="結帳" type="button">結帳</button>
+        </td>
+      </tr>
+    </table>
+    <p>&nbsp;</p>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
@@ -165,7 +140,7 @@ if ((isset($_POST["MM_update"])) && ($_POST["MM_update"] == "form1")) {
   <!-- /primaryContent -->
   <div id="secondaryContent">
     <p>&nbsp;</p>
-    <h3>未處理訂單</h3>
+    <h3>最新商品</h3>
     <h3>相關連結</h3>
     <!-- 
             This part was designed to handle images
@@ -178,25 +153,26 @@ if ((isset($_POST["MM_update"])) && ($_POST["MM_update"] == "form1")) {
       <li><a href="http://www.off.com.tw/weiblog">給我建議</a>
     </ul>
     <?php if(!isset($_SESSION['MM_Username'])){?>
-    <h3>管理員登入</h3>
+    <h3>登入</h3>
+    <h5><? echo $_GET['msg']; ?></h5>
     <form action="loginCheck.php" method="post">
       <p>
-        <input value="user" name="user" placeholder="user" />
+        <input value="" name="user" placeholder="user" />
       </p>
       <p>
         <input name="password" type="password" value="" placeholder="password" />
       </p>
-      <p>
         <button type="submit">送出</button>
-      </p>
-    </form>
+        <button type="button" onclick="location.href='registerUser.php'">註冊會員</button>        
+    </form>    
+    
     <?php }else{ ?>
-    <h3>管理員服務</h3>
+    <h3>會員服務</h3>
     <form action="logout.php" method="post">
     <p>歡迎 <?php echo $_SESSION['MM_Username'];?> 您光臨</p>
     <p><button type="submit">登出</button></p>
     </form>
-	<?php }?>
+    <?php }?>
   </div>
   <!-- /secondaryContent -->
         <br class="clear" />    
