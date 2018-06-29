@@ -1,48 +1,3 @@
-<?php
-if (!isset($_SESSION)) {
-  session_start();
-}
-$MM_authorizedUsers = "Y";
-$MM_donotCheckaccess = "false";
-
-// *** Restrict Access To Page: Grant or deny access to this page
-function isAuthorized($strUsers, $strGroups, $UserName, $UserGroup) { 
-  // For security, start by assuming the visitor is NOT authorized. 
-  $isValid = False; 
-
-  // When a visitor has logged into this site, the Session variable MM_Username set equal to their username. 
-  // Therefore, we know that a user is NOT logged in if that Session variable is blank. 
-  if (!empty($UserName)) { 
-    // Besides being logged in, you may restrict access to only certain users based on an ID established when they login. 
-    // Parse the strings into arrays. 
-    $arrUsers = Explode(",", $strUsers); 
-    $arrGroups = Explode(",", $strGroups); 
-    if (in_array($UserName, $arrUsers)) { 
-      $isValid = true; 
-    } 
-    // Or, you may restrict access to only certain users based on their username. 
-    if (in_array($UserGroup, $arrGroups)) { 
-      $isValid = true; 
-    } 
-    if (($strUsers == "") && false) { 
-      $isValid = true; 
-    } 
-  } 
-  return $isValid; 
-}
-
-$MM_restrictGoTo = "index.php";
-if (!((isset($_SESSION['MM_Username'])) && (isAuthorized("",$MM_authorizedUsers, $_SESSION['MM_Username'], $_SESSION['MM_UserGroup'])))) {   
-  $MM_qsChar = "?";
-  $MM_referrer = $_SERVER['PHP_SELF'];
-  if (strpos($MM_restrictGoTo, "?")) $MM_qsChar = "&";
-  if (isset($_SERVER['QUERY_STRING']) && strlen($_SERVER['QUERY_STRING']) > 0) 
-  $MM_referrer .= "?" . $_SERVER['QUERY_STRING'];
-  $MM_restrictGoTo = $MM_restrictGoTo. $MM_qsChar . "accesscheck=" . urlencode($MM_referrer);
-  header("Location: ". $MM_restrictGoTo); 
-  exit;
-}
-?>
 <?php session_start(); ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -133,53 +88,52 @@ if (!((isset($_SESSION['MM_Username'])) && (isAuthorized("",$MM_authorizedUsers,
   </object>
 <div id="container"><!-- InstanceBeginEditable name="EditRegion1" -->
   <div id="primaryContent">
-    <h2>&nbsp;</h2>
-    <h3>&nbsp;</h3>
+    <h2>商品項目新增</h2>
+	<h3>請依序填入商品相關資料以及「瀏覽」並選取商品圖片後上傳。</h3>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
-    <form name="form1" method="POST" enctype="multipart/form-data" id="form1" action="productAddProcess.php">
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr>
-<th width="25%" align="right" scope="col"><p>商品編號</p></th>
-<th align="left" valign="middle" scope="col"><h5>採用自動編號、不需要填！</h5></th>
-</tr>
-<tr>
-<th width="25%" align="right" scope="row"><p>商品名稱</p></th>
-<td align="left" valign="top"><label>
-<input name="productName" type="text" id="productName" size="36" />
-</label></td>
-</tr>
-<tr>
-<th width="25%" align="right" scope="row"><p>商品詳細介紹</p></th>
-<td align="left" valign="top">
-<textarea name="productInfo" id="productInfo" cols="40" rows="10"></textarea>
-</td>
-</tr>
-<tr>
-<th width="25%" align="right" scope="row"><p>單價</p></th>
-<td align="left" valign="top">
-<input name="productPrice" type="text" id="productPrice" size="10" />
-</td>
-</tr>
-<tr>
-<th width="25%" align="right" scope="row"><p>庫存量</p></th>
-<td align="left" valign="top"><label>
-<input name="productQty" type="text" id="productQty" size="6" />
-</label></td>
-</tr>
-<tr>
-<th width="25%" align="right" scope="row"><p>商品圖片</p></th>
-<td align="left" valign="top">
-<input type="file" name="productImage" id="productImage" />
-</td>
-</tr>
-<tr>
-<th width="25%" align="right" scope="row"><p>&nbsp;</p></th>
-<td align="left" valign="top"><button type="submit">上傳新增</button></td>
-</tr>
-</table>
-    </form>
-    <p>&nbsp;</p>
+    <form action="productAddProcess.php" method="post" enctype="multipart/form-data" id="form1">
+      <table width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+          <th width="25%" align="right" scope="col"><p>商品編號</p></th>
+          <th align="left" valign="middle" scope="col"><h5>採用自動編號、不需要填！</h5></th>
+        </tr>
+        <tr>
+          <th width="25%" align="right" scope="row"><p>商品名稱</p></th>
+          <td align="left" valign="top"><label>
+            <input name="productName" type="text" id="productName" size="36" />
+          </label></td>
+        </tr>
+        <tr>
+          <th width="25%" align="right" scope="row"><p>商品詳細介紹</p></th>
+          <td align="left" valign="top">
+            <textarea name="productInfo" id="productInfo" cols="40" rows="10"></textarea>
+          </td>
+        </tr>
+        <tr>
+          <th width="25%" align="right" scope="row"><p>單價</p></th>
+          <td align="left" valign="top">
+            <input name="productPrice" type="text" id="productPrice" size="10" />
+          </td>
+        </tr>
+        <tr>
+          <th width="25%" align="right" scope="row"><p>庫存量</p></th>
+          <td align="left" valign="top"><label>
+            <input name="productQty" type="text" id="productQty" size="6" />
+          </label></td>
+        </tr>
+        <tr>
+          <th width="25%" align="right" scope="row"><p>商品圖片</p></th>
+          <td align="left" valign="top">
+            <input type="file" name="productImage" id="productImage" />
+          </td>
+        </tr>
+        <tr>
+          <th width="25%" align="right" scope="row"><p>&nbsp;</p></th>
+          <td align="left" valign="top"><button type="submit">上傳新增</button></td>
+        </tr>
+      </table>
+</form>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
     <p>&nbsp;</p>

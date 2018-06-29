@@ -145,10 +145,7 @@ if ((isset($_GET["MM_update"])) && ($_GET["MM_update"] == "form1")) {
     <h3>您的功能已啟動</h3>
     <h5>三秒後返回...</h5>
     <p>&nbsp;</p>
-    <form method="POST" name="form1" action="<?php echo $editFormAction; ?>" id="form1">
-    	<input type="text" name="id"><input type="text" name="state">
-    	<input type="hidden" name="MM_update" value="form1" />
-    </form>
+    
     <p>&nbsp;</p>
     <p>&nbsp;</p>
     <p>&nbsp;</p>

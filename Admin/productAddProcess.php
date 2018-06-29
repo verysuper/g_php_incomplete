@@ -89,29 +89,30 @@
   </object>
 <div id="container"><!-- InstanceBeginEditable name="EditRegion1" -->
   <div id="primaryContent">
-<h2>商品新增處理已完成</h2>
-<h3>商品圖片將存放至picture資料夾，副檔名統一採用「jpg」存放。</h3>
-<?php 
+    <h2>商品新增處理已完成</h2>
+	<h3>商品圖片將存放至picture資料夾，副檔名統一採用「jpg」存放。</h3>
+    <p>&nbsp;</p>
+    <?php 
 //取得前一頁面傳遞的商品資料
-$pname = $_POST['productName'];	//名稱
-$pinfo = $_POST['productInfo'];	//詳細
-$pprice = $_POST['productPrice'];	//單價
-$pqty = $_POST['productQty'];	//數量
-
-mysql_select_db($database_shop, $shop);
-
-$sqlstr = "insert into product (name,introduce,price,qty) values('$pname','$pinfo',$pprice,$pqty)";
-if(mysql_query($sqlstr)){
-echo "<h5>記錄新增成功!</h5>";
-}	
-$pid = mysql_insert_id();	//取得剛新增記錄的自動編號
-
-
+		$pname  = $_POST['productName'];	//名稱
+		$pinfo  = $_POST['productInfo'];	//詳細
+		$pprice = $_POST['productPrice'];	//單價
+		$pqty   = $_POST['productQty'];	 //數量
+		
+		mysql_select_db($database_shop, $shop);
+		
+		$sqlstr = "insert into product (name,introduce,price,qty)  values('$pname','$pinfo',$pprice,$pqty)";
+		if(mysql_query($sqlstr)){
+			echo "<h5>記錄新增成功!</h5>";
+		}	
+		$pid = mysql_insert_id();	//取得剛新增記錄的自動編號
+		
+		
 //透過$_FILES['xxx']讀取上傳檔案資料
-$userfile = $_FILES["productImage"];
-fileCopy($userfile,$pid);
-deleteFile($userfile);
-?>
+		$userfile = $_FILES["productImage"];
+		fileCopy($userfile,$pid);
+		deleteFile($userfile);
+    ?>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
@@ -123,21 +124,6 @@ deleteFile($userfile);
     <p>&nbsp;</p>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
-    <p>&nbsp;</p>
-    <p>&nbsp;</p>
-    <?php
-//將上傳至暫存區中的檔案存至實際欲存放的目錄下
-function fileCopy($file,$pid){
-if(copy($file['tmp_name'],"../Shop/picture/$pid.jpg")){
-echo "<h5>檔案上傳成功!</h5>";
-}
-}
-
-//將檔案複製至實際目錄後，接著將暫存檔案刪除
-function deleteFile($file){
-unlink($file['tmp_name']);
-}
-?>
     <!-- /comments -->
   </div>
 <!-- InstanceEndEditable -->
@@ -195,3 +181,16 @@ unlink($file['tmp_name']);
     </div><!-- /footer -->
 </body>
 <!-- InstanceEnd --></html>
+<?php
+//將上傳至暫存區中的檔案存至實際欲存放的目錄下
+	function fileCopy($file,$pid){
+		if(copy($file['tmp_name'],"../Shop/picture/$pid.jpg")){
+			echo "<h5>檔案上傳成功!</h5>";
+		}
+	}
+
+//將檔案複製至實際目錄後，接著將暫存檔案刪除
+	function deleteFile($file){
+		unlink($file['tmp_name']);
+	}
+?>

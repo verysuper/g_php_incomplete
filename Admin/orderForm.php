@@ -139,15 +139,25 @@ $totalRows_ordersList = mysql_num_rows($ordersList);
       <th align="center"><p>出貨否</p></th>
       <th align="center"><p>出貨/詳細</p></th>
     </tr>
-    <?php do { ?><form id="form1" method="POST" action="">    
+    <?php do { ?>
+    
+    
+    
+    <form id="form1" method="POST" action="orderProcess.php">    
       <tr>
-        <td align="center"><p><?php echo $row_ordersList['O_id']; ?></p></td>
+        <td align="center"><p><?php echo $row_ordersList['O_id']; ?>
+        <input type="hidden" name="oid" id="oid" value="<?php echo $row_ordersList['O_id']; ?>">        
+        </p></td>
         <td align="center"><p><?php echo $row_ordersList['userid']; ?></p></td>
         <td align="center"><h4><?php echo $row_ordersList['orderDate']; ?></h4></td>
         <td align="center"><h5><?php echo $row_ordersList['shipment']; ?></h5></td>
         <td align="center"><button type="submit">出貨/詳細</button></td>
       </tr>
-    </form> <?php } while ($row_ordersList = mysql_fetch_assoc($ordersList)); ?>
+    </form>
+    
+    
+    
+    <?php } while ($row_ordersList = mysql_fetch_assoc($ordersList)); ?>
   </table>
   <?php } // Show if recordset not empty ?>
   <?php if ($totalRows_ordersList == 0) { // Show if recordset empty ?>
