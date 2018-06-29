@@ -160,7 +160,7 @@ $totalRows_productDetail = mysql_num_rows($productDetail);
     	</tr>
     	<tr>
     		<td colspan="2" align="center">
-            	<button>訂購</button>
+            	<button onclick="location.href='cart.php?id=<?php echo $row_productDetail['id']; ?>&add=additem'">訂購</button>
             </td>
     	</tr>
     </table>

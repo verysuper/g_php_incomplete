@@ -156,7 +156,7 @@ if(!is_object($cart)) $cart = new wfCart();
             <td><?php echo $item['subtotal'];?></td>
             <td>
                 <button name="edit" value="更新" type="submit">更新</button>
-                <button value="移除" type="button">移除</button>
+                <button value="移除" type="button" onclick="location.href='cart.php?id=<?php echo $item['id']; ?>&remove=removeitem'">移除</button>
             </td>
           </tr>
         </form>
@@ -166,7 +166,7 @@ if(!is_object($cart)) $cart = new wfCart();
     	<tr>
             <td colspan="6" align="center" valign="middle">
                 <?php echo "<h5>總計:".$cart->total."</h5>"; ?>
-                <button value="清空購物車" type="button">清空購物車</button>
+                <button value="清空購物車" type="button" onclick="location.href='cart.php?empty=emptyitem'">清空購物車</button>
                 <button value="結帳" type="button">結帳</button>
             </td>
         </tr>
