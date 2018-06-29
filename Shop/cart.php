@@ -99,6 +99,34 @@
   </object>
 <div id="container"><!-- InstanceBeginEditable name="EditRegion1" -->
   <div id="primaryContent">
+  在 <h2>購物車</h2> 之前，加入：
+
+<?php
+//檢查是否有項目要加入購物車
+if($_GET['add'] && $_GET['id']!=NULL){
+//查詢資料表資料並且加入購物車中
+if($resource=mysql_query("select * from product where id=".$_GET['id'])){
+$row = mysql_fetch_assoc($resource);	
+$cart->add_item($row['id'],1,$row['price'],$row['name']);
+}
+}
+//檢查購物車是否有數量要更新
+if($_GET['edit'] && $_GET['id']!=NULL){
+$rid = intval($_GET['id']);	
+$qty = intval($_GET['qty']);
+$cart->edit_item($rid,$qty);
+}
+//檢查購物車是否有項目要移除
+if($_GET['remove'] && $_GET['id']!=NULL) {	
+$rid = intval($_GET['id']);
+$cart->del_item($rid);
+}
+//檢查是否要清空購物車
+if($_GET['empty']!=NULL){
+$cart->empty_cart();
+}
+?>
+
     <h2>購物車</h2>
 	<h3>底下將列出您所購買的商品。</h3>
     <p>&nbsp;</p>
