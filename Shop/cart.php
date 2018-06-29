@@ -1,11 +1,11 @@
 <?php
-	require_once('../Connections/shop.php'); 
-	include('../cart/wfcart.php');
-	@session_start();
-	//將$cart的指標指向 Session
-	$cart =& $_SESSION['wfcart']; 
-	//若$cart不為物件，重新建立一個新的$cart物件
-	if(!is_object($cart)) $cart = new wfCart();
+require_once('../Connections/shop.php'); 
+include('../cart/wfcart.php');
+@session_start();
+//將$cart的指標指向 Session
+$cart =& $_SESSION['wfcart']; 
+//若$cart不為物件，重新建立一個新的$cart物件
+if(!is_object($cart)) $cart = new wfCart();
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -99,67 +99,83 @@
   </object>
 <div id="container"><!-- InstanceBeginEditable name="EditRegion1" -->
   <div id="primaryContent">
-  在 <h2>購物車</h2> 之前，加入：
-
-<?php
-//檢查是否有項目要加入購物車
-if($_GET['add'] && $_GET['id']!=NULL){
-//查詢資料表資料並且加入購物車中
-if($resource=mysql_query("select * from product where id=".$_GET['id'])){
-$row = mysql_fetch_assoc($resource);	
-$cart->add_item($row['id'],1,$row['price'],$row['name']);
-}
-}
-//檢查購物車是否有數量要更新
-if($_GET['edit'] && $_GET['id']!=NULL){
-$rid = intval($_GET['id']);	
-$qty = intval($_GET['qty']);
-$cart->edit_item($rid,$qty);
-}
-//檢查購物車是否有項目要移除
-if($_GET['remove'] && $_GET['id']!=NULL) {	
-$rid = intval($_GET['id']);
-$cart->del_item($rid);
-}
-//檢查是否要清空購物車
-if($_GET['empty']!=NULL){
-$cart->empty_cart();
-}
-?>
-
+    
+    <?php
+		//檢查是否有項目要加入購物車
+		if($_GET['add'] && $_GET['id']!=NULL){
+			//查詢資料表資料並且加入購物車中
+			if($resource=mysql_query("select * from product where id=".$_GET['id'])){
+				$row = mysql_fetch_assoc($resource);	
+				$cart->add_item($row['id'],1,$row['price'],$row['name']);
+			}
+		}
+		//檢查購物車是否有數量要更新
+		if($_GET['edit'] && $_GET['id']!=NULL){
+			$rid = intval($_GET['id']);	
+			$qty = intval($_GET['qty']);
+			$cart->edit_item($rid,$qty);
+		}
+		//檢查購物車是否有項目要移除
+		if($_GET['remove'] && $_GET['id']!=NULL) {	
+			$rid = intval($_GET['id']);
+			$cart->del_item($rid);
+		}
+		//檢查是否要清空購物車
+		if($_GET['empty']!=NULL){
+			$cart->empty_cart();
+		}
+	?>
+    
     <h2>購物車</h2>
 	<h3>底下將列出您所購買的商品。</h3>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
+    
+    <?php
+	if($cart->itemcount > 0){
+	?>
     <table>
     	<tr>
     		<th width="15%" scope="col"><p>商品編號</p></th>
-        <th width="30%" scope="col"><p>商品名稱</p></th>
-        <th width="10%" scope="col"><p>數量</p></th>
-        <th width="15%" scope="col"><p>單價</p></th>
-        <th width="15%" scope="col"><p>小計</p></th>
-        <th width="15%" scope="col"><p>操作</p></th>
+            <th width="30%" scope="col"><p>商品名稱</p></th>
+            <th width="10%" scope="col"><p>數量</p></th>
+            <th width="15%" scope="col"><p>單價</p></th>
+            <th width="15%" scope="col"><p>小計</p></th>
+            <th width="15%" scope="col"><p>操作</p></th>
     	</tr>
-    	<form method="get">
-      <tr>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>
-            <button name="edit" value="更新" type="submit">更新</button>
-            <button value="移除" type="button">移除</button>
-        </td>
-      </tr>
-      </form>
+    	<?php
+	  foreach($cart->get_contents() as $item){	  
+	  ?>
+        <form method="get">
+        <input type="hidden" name="id" value="<?php echo $item['id'];?>"/>
+          <tr>
+            <td><?php echo $item['id']; ?></td>
+            <td><?php echo $item['info']; ?></td>
+            <td><input style="size:portrait" type="text" name="qty" value="<?php echo $item['qty'];?>" size="1"/></td>
+            <td><?php echo $item['price'];?></td>
+            <td><?php echo $item['subtotal'];?></td>
+            <td>
+                <button name="edit" value="更新" type="submit">更新</button>
+                <button value="移除" type="button">移除</button>
+            </td>
+          </tr>
+        </form>
+        <?php
+	  }
+	  ?>
     	<tr>
-        <td colspan="6" align="center" valign="middle">
-        	<button value="清空購物車" type="button">清空購物車</button>
-            <button value="結帳" type="button">結帳</button>
-        </td>
-      </tr>
+            <td colspan="6" align="center" valign="middle">
+                <?php echo "<h5>總計:".$cart->total."</h5>"; ?>
+                <button value="清空購物車" type="button">清空購物車</button>
+                <button value="結帳" type="button">結帳</button>
+            </td>
+        </tr>
     </table>
+     <?php
+	}else{
+		echo "<h5>目前購物車中無任何商品！</h5>";
+	}
+	?>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
