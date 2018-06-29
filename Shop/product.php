@@ -189,7 +189,7 @@ $queryString_productList = sprintf("&totalRows_productList=%d%s", $totalRows_pro
         <tr>
           <td colspan="2" align="center">
             <button onclick="location.href='productDetail.php?id=<?php echo $row_productList['id']; ?>'">詳細</button>
-            <button onclick="">訂購</button>
+            <button onclick="location.href='cart.php?id=<?php echo $row_productList['id']; ?>&add=additem'">訂購</button>
             </td>    		
           </tr>
       </table>
