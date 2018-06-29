@@ -1,4 +1,12 @@
-<?php session_start();?>
+<?php
+	require_once('../Connections/shop.php'); 
+	include('../cart/wfcart.php');
+	@session_start();
+	//將$cart的指標指向 Session
+	$cart =& $_SESSION['wfcart']; 
+	//若$cart不為物件，重新建立一個新的$cart物件
+	if(!is_object($cart)) $cart = new wfCart();
+?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/Shop.dwt.php" codeOutsideHTMLIsLocked="false" -->
