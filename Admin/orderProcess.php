@@ -31,15 +31,15 @@ function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDe
 }
 }
 
-$oid_Recordset1 = "0";
+$oid_orderDetailsList = "0";
 if (isset($_REQUEST['oid'])) {
-  $oid_Recordset1 = $_REQUEST['oid'];
+  $oid_orderDetailsList = $_REQUEST['oid'];
 }
 mysql_select_db($database_shop, $shop);
-$query_Recordset1 = sprintf("SELECT orderdetail.*,name, (D_qty * D_price) as subtotal FROM orderdetail, product WHERE orderdetail.D_pid = product.id AND orderdetail.O_id=%s ORDER BY D_id ASC", GetSQLValueString($oid_Recordset1, "int"));
-$Recordset1 = mysql_query($query_Recordset1, $shop) or die(mysql_error());
-$row_Recordset1 = mysql_fetch_assoc($Recordset1);
-$totalRows_Recordset1 = mysql_num_rows($Recordset1);
+$query_orderDetailsList = sprintf("SELECT orderdetail.*,name, (D_qty * D_price) as subtotal FROM orderdetail, product WHERE orderdetail.D_pid = product.id AND orderdetail.O_id=%s ORDER BY D_id ASC", GetSQLValueString($oid_orderDetailsList, "int"));
+$orderDetailsList = mysql_query($query_orderDetailsList, $shop) or die(mysql_error());
+$row_orderDetailsList = mysql_fetch_assoc($orderDetailsList);
+$totalRows_orderDetailsList = mysql_num_rows($orderDetailsList);
  session_start(); ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -134,7 +134,7 @@ $totalRows_Recordset1 = mysql_num_rows($Recordset1);
     <h3>查看訂單詳細資料，同時可以將該訂單設定為出貨。</h3>
 	<?php if ($totalRows_orderDetailsList > 0) { // Show if recordset not empty ?>
     <h6>訂單編號：<?php echo $row_orderDetailsList['O_id']; ?></h6>
-    <form id="form1" method="post" action="">
+    <form id="form1" method="post" action="orderShipment.php">
       <table width="100%" border="1" cellspacing="0" cellpadding="0">
         <tr>
           <th scope="col"><p>商品編號</p></th>
@@ -234,5 +234,5 @@ $totalRows_Recordset1 = mysql_num_rows($Recordset1);
 </body>
 <!-- InstanceEnd --></html>
 <?php
-mysql_free_result($Recordset1);
+mysql_free_result($orderDetailsList);
 ?>

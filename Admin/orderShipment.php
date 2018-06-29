@@ -31,11 +31,26 @@ function GetSQLValueString($theValue, $theType, $theDefinedValue = "", $theNotDe
 }
 }
 
-mysql_select_db($database_shop, $shop);
-$query_ordersList = "SELECT * FROM orders ORDER BY orderDate DESC";
-$ordersList = mysql_query($query_ordersList, $shop) or die(mysql_error());
-$row_ordersList = mysql_fetch_assoc($ordersList);
-$totalRows_ordersList = mysql_num_rows($ordersList);
+$editFormAction = $_SERVER['PHP_SELF'];
+if (isset($_SERVER['QUERY_STRING'])) {
+  $editFormAction .= "?" . htmlentities($_SERVER['QUERY_STRING']);
+}
+
+if ((isset($_POST["MM_update"])) && ($_POST["MM_update"] == "form1")) {
+  $updateSQL = sprintf("UPDATE orders SET shipment=%s WHERE O_id=%s",
+                       GetSQLValueString($_POST['state'], "text"),
+                       GetSQLValueString($_POST['oid'], "int"));
+
+  mysql_select_db($database_shop, $shop);
+  $Result1 = mysql_query($updateSQL, $shop) or die(mysql_error());
+
+  $updateGoTo = "orderForm.php";
+  if (isset($_SERVER['QUERY_STRING'])) {
+    $updateGoTo .= (strpos($updateGoTo, '?')) ? "&" : "?";
+    $updateGoTo .= $_SERVER['QUERY_STRING'];
+  }
+  header(sprintf("Location: %s", $updateGoTo));
+}
  session_start(); ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -126,44 +141,17 @@ $totalRows_ordersList = mysql_num_rows($ordersList);
   </object>
 <div id="container"><!-- InstanceBeginEditable name="EditRegion1" -->
   <div id="primaryContent">
-    <h2>會員訂單瀏覽</h2>
-    <h3>依訂單日期遞減排序，出貨處理或查看訂單細目請按下「出貨」按鈕。</h3>
+    <h2>訂單出貨完成</h2>
+	<h5>該訂單已經完成出貨處理，畫面稍後自動轉回訂單處理。</h5>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
-    <?php if ($totalRows_ordersList > 0) { // Show if recordset not empty ?>
-  <table>
-    <tr>
-      <th align="center"><p>訂單編號</p></th>
-      <th align="center"><p>會員ID</p></th>
-      <th align="center"><p>訂購日期</p></th>
-      <th align="center"><p>出貨否</p></th>
-      <th align="center"><p>出貨/詳細</p></th>
-    </tr>
-    <?php do { ?>
-    
-    
-    
-    <form id="form1" method="GET" action="orderProcess.php">    
-      <tr>
-        <td align="center"><p><?php echo $row_ordersList['O_id']; ?>
-        <input type="hidden" name="oid" id="oid" value="<?php echo $row_ordersList['O_id']; ?>">        
-        </p></td>
-        <td align="center"><p><?php echo $row_ordersList['userid']; ?></p></td>
-        <td align="center"><h4><?php echo $row_ordersList['orderDate']; ?></h4></td>
-        <td align="center"><h5><?php echo $row_ordersList['shipment']; ?></h5></td>
-        <td align="center"><button type="submit">出貨/詳細</button></td>
-      </tr>
+    <form method="POST" name="form1" action="<?php echo $editFormAction; ?>" id="form1">
+    	<input type="hidden" name="oid">
+        <input type="hidden" name="state">
+        <input type="hidden" name="MM_update" value="form1" />
     </form>
-    
-    
-    
-    <?php } while ($row_ordersList = mysql_fetch_assoc($ordersList)); ?>
-  </table>
-  <?php } // Show if recordset not empty ?>
-  <?php if ($totalRows_ordersList == 0) { // Show if recordset empty ?>
-  <h5>目前尚無訂單 T_T</h5>
-  <?php } // Show if recordset empty ?>
-<p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
@@ -228,6 +216,3 @@ $totalRows_ordersList = mysql_num_rows($ordersList);
     </div><!-- /footer -->
 </body>
 <!-- InstanceEnd --></html>
-<?php
-mysql_free_result($ordersList);
-?>

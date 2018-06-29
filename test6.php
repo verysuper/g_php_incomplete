@@ -6,14 +6,12 @@
 <title>無標題文件</title>
 <style>
 h1{cursor:wait;}
-
 </style>
 </head>
 
 <body>
 
 <h1>3秒去GOOGLE....</h1>
-
 
 </body>
 </html>

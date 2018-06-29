@@ -1,4 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <info>
 	<infoitem key="UD_Recordset1" value="name:O_id;datatype:int,name:D_id;datatype:int,name:D_pid;datatype:int,name:D_qty;datatype:int,name:D_price;datatype:int,name:name;datatype:string,name:subtotal;datatype:int" />
+	<infoitem key="UD_orderDetailsList" value="name:O_id;datatype:int,name:D_id;datatype:int,name:D_pid;datatype:int,name:D_qty;datatype:int,name:D_price;datatype:int,name:name;datatype:string,name:subtotal;datatype:int" />
 </info>
