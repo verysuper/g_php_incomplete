@@ -134,7 +134,12 @@ $totalRows_orderDetailsList = mysql_num_rows($orderDetailsList);
     <h3>查看訂單詳細資料，同時可以將該訂單設定為出貨。</h3>
 	<?php if ($totalRows_orderDetailsList > 0) { // Show if recordset not empty ?>
     <h6>訂單編號：<?php echo $row_orderDetailsList['O_id']; ?></h6>
+    
+    
     <form id="form1" method="post" action="orderShipment.php">
+    
+    <input type="hidden" name="oid" value="<?php echo $row_orderDetailsList['O_id']; ?>">
+    
       <table width="100%" border="1" cellspacing="0" cellpadding="0">
         <tr>
           <th scope="col"><p>商品編號</p></th>
@@ -157,6 +162,11 @@ $totalRows_orderDetailsList = mysql_num_rows($orderDetailsList);
           <input type="submit" name="button" id="button" value="確定出貨" /></td>
         </tr>
       </table>
+      
+      
+      <input type="hidden" name="state" value="Y">
+      <input type="hidden" name="MM_update" value="form1">          
+      
     </form>
     <?php } // Show if recordset not empty ?>
     
