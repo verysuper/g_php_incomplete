@@ -223,3 +223,16 @@ function checkUser(){
 	}
 }
 ?>
+<script language="javascript">
+	function dataCheck(){
+		if(form1.O_name.value==""){	//檢查是否為空值
+			alert("請填收件人姓名"); //顯示警告訊息
+			form1.O_name.focus(); //將鍵盤游標停在該控制項上
+		}else if(form1.O_address.value==""){
+			alert("請填收件人地址");
+			form1.O_address.focus();			
+		}else{
+			form1.submit(); //將表單採用原設定方式送出
+		}
+	}
+</script>
