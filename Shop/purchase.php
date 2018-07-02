@@ -2,7 +2,7 @@
 require_once('../Connections/shop.php'); 
 include('../cart/wfcart.php');
 @session_start();
-//將$cart的指標指向 Session
+//將$cart的指標指向 Sessionn
 $cart =& $_SESSION['wfcart']; 
 //若$cart不為物件，重新建立一個新的$cart物件
 if(!is_object($cart)) $cart = new wfCart();
@@ -99,89 +99,14 @@ if(!is_object($cart)) $cart = new wfCart();
   </object>
 <div id="container"><!-- InstanceBeginEditable name="EditRegion1" -->
   <div id="primaryContent">
+    <h2>訂單處理完成</h2>
+	<h3>非常感謝您的訂購、您所訂購的商品將在3個工作天內以貨到付款方式寄達。</h3>     
     
     <?php
-		//檢查是否有項目要加入購物車
-		if($_GET['add'] && $_GET['id']!=NULL){
-			//查詢資料表資料並且加入購物車中
-			if($resource=mysql_query("select * from product where id=".$_GET['id'])){
-				$row = mysql_fetch_assoc($resource);	
-				$cart->add_item($row['id'],1,$row['price'],$row['name']);
-			}
-		}
-		//檢查購物車是否有數量要更新
-		if($_GET['edit'] && $_GET['id']!=NULL){
-			$rid = intval($_GET['id']);	
-			$qty = intval($_GET['qty']);
-			$cart->edit_item($rid,$qty);
-		}
-		//檢查購物車是否有項目要移除
-		if($_GET['remove'] && $_GET['id']!=NULL) {	
-			$rid = intval($_GET['id']);
-			$cart->del_item($rid);
-		}
-		//檢查是否要清空購物車
-		if($_GET['empty']!=NULL){
-			$cart->empty_cart();
-		}
+		echo writeData();
+		echo emptyCart();
 	?>
     
-    <h2>購物車</h2>
-	<h3>底下將列出您所購買的商品。</h3>
-    <p>&nbsp;</p>
-    <p>&nbsp;</p>
-    
-    <?php
-	if($cart->itemcount > 0){
-	?>
-    <table>
-    	<tr>
-    		<th width="15%" scope="col"><p>商品編號</p></th>
-            <th width="30%" scope="col"><p>商品名稱</p></th>
-            <th width="10%" scope="col"><p>數量</p></th>
-            <th width="15%" scope="col"><p>單價</p></th>
-            <th width="15%" scope="col"><p>小計</p></th>
-            <th width="15%" scope="col"><p>操作</p></th>
-    	</tr>
-    	<?php
-	  foreach($cart->get_contents() as $item){	  
-	  ?>
-        <form method="get">
-        <input type="hidden" name="id" value="<?php echo $item['id'];?>"/>
-          <tr>
-            <td><?php echo $item['id']; ?></td>
-            <td><?php echo $item['info']; ?></td>
-            <td><input style="size:portrait" type="text" name="qty" value="<?php echo $item['qty'];?>" size="1"/></td>
-            <td><?php echo $item['price'];?></td>
-            <td><?php echo $item['subtotal'];?></td>
-            <td>
-                <button name="edit" value="更新" type="submit">更新</button>
-                <button value="移除" type="button" onclick="location.href='cart.php?id=<?php echo $item['id']; ?>&remove=removeitem'">移除</button>
-            </td>
-          </tr>
-        </form>
-        <?php
-	  }
-	  ?>
-    	<tr>
-            <td colspan="6" align="center" valign="middle">
-                <?php echo "<h5>總計:".$cart->total."</h5>"; ?>
-                <button value="清空購物車" type="button" onclick="location.href='cart.php?empty=emptyitem'">清空購物車</button>
-                <button value="結帳" type="button" onClick="location.href='checkOut.php'">結帳</button>
-            </td>
-        </tr>
-    </table>
-     <?php
-	}else{
-		echo "<h5>目前購物車中無任何商品！</h5>";
-	}
-	?>
-    <p>&nbsp;</p>
-    <p>&nbsp;</p>
-    <p>&nbsp;</p>
-    <p>&nbsp;</p>
-    <p>&nbsp;</p>
-    <p>&nbsp;</p>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
@@ -244,3 +169,40 @@ if(!is_object($cart)) $cart = new wfCart();
     </div><!-- /footer -->
 </body>
 <!-- InstanceEnd --></html>
+<?php
+function writeData(){
+	global $cart;
+	//寫入order資料表
+	$name    = $_POST['O_name'];
+	$phone   = $_POST['O_phone'];
+	$cell    = $_POST['O_cellphone'];
+	$address = $_POST['O_address'];
+	$userid	 = $_SESSION['MM_Username'];
+	$ordate  = date("Y-m-d h:i:s");
+	
+	//將收件人資料寫入orders資料表中
+	$sqlstr = "insert into orders (O_name,O_phone,O_cellphone,O_address,userid, orderDate) values 
+
+('$name','$phone','$cell','$address','$userid','$ordate')";
+	mysql_query($sqlstr);
+	
+	//取回剛寫入orders資料表中的最後一筆序號，採用O_id由大至小排序
+	$sqlstr = "select O_id from orders where userid='$userid' order by O_id desc limit 1";
+	$row = mysql_fetch_row(mysql_query($sqlstr));
+	
+	//將購買商品資料與orders的編號寫入orderdetail資料表中	
+	foreach($cart->get_contents() as $item){
+		$sqlstr = "insert into orderdetail (O_id,D_pid,D_qty,D_price) values($row[0],".$item['id'].",".$item['qty'].",".$item['price'].")";	
+		mysql_query($sqlstr);
+		
+		//扣除product資料中商品庫存
+		$sqlstr = "update product set qty=(qty-".$item['qty'].") where id=".$item['id'];	
+		mysql_query($sqlstr);
+	}	 
+}
+function emptyCart(){
+		global $cart;
+		$cart->empty_cart();
+		echo "<h5>訂購完成、再次謝謝您！</h5>";
+}	
+?>	
