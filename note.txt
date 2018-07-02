@@ -2,11 +2,109 @@ PHP
 
 2018/07/02--------我是分隔線--------我是分隔線--------我是分隔線--------
 
-checkOut.php(存檔至 Shop 資料夾中)-------------------------------------------------------------
+CS6~
+內建：
+C:\Program Files (x86)\Adobe\Dreamweaver CS6\configuration\Snippets
+自訂：
+C:\Documents and Settings\使用者名稱\Application Data\Adobe\Dreamweaver CS6\zh_TW\Configuration\Snippets
+
+
+CC 2014~
+內建：
+C:\Program Files\Adobe\Dreamweaver CC 2014.1\configuration\Snippets
+自訂：
+C:\Users\使用者名稱\AppData\Roaming\Adobe\Dreamweaver CC 2014.1\zh_TW\Configuration\Snippets
+
+
+CC 2018~
+內建：
+C:\Program Files\Adobe\Adobe Dreamweaver CC 2018\configuration\Snippets
+自訂：
+C:\Users\使用者名稱\AppData\Roaming\Adobe\Dreamweaver CC 2018\zh_TW\Configuration\Snippets
+
+--------我是分隔線--------我是分隔線--------我是分隔線--------
+
+purchase.php(存檔至 Shop 資料夾中)-------------------------------------------------------------
 ※開新檔案/來自範本的頁面/存檔(存檔至 Shop 資料夾中)
 
-結帳作業
-目前網站尚未提供線上付款，如造成不便請您多多包涵！
+<h2>訂單處理完成</h2>
+<h3>非常感謝您的訂購、您所訂購的商品將在3個工作天內以貨到付款方式寄達。</h3>
+----------------------------------------------------------------------------------------------
+替換第一列語法：
+
+<?php session_start();?>
+<?php require_once('../Connections/shop.php'); ?>
+
+成為~
+
+<?php
+require_once('../Connections/shop.php'); 
+include('../cart/wfcart.php');
+@session_start();
+//將$cart的指標指向 Sessionn
+$cart =& $_SESSION['wfcart']; 
+//若$cart不為物件，重新建立一個新的$cart物件
+if(!is_object($cart)) $cart = new wfCart();
+?>
+----------------------------------------------------------------------------------------------
+在 </html> 之後加入：
+
+<?php
+function writeData(){
+global $cart;
+//寫入order資料表
+$name = $_POST['O_name'];
+$phone = $_POST['O_phone'];
+$cell = $_POST['O_cellphone'];
+$address = $_POST['O_address'];
+$userid	= $_SESSION['MM_Username'];
+$ordate = date("Y-m-d h:i:s");
+
+//將收件人資料寫入orders資料表中
+$sqlstr = "insert into orders (O_name,O_phone,O_cellphone,O_address,userid, orderDate) values 
+
+('$name','$phone','$cell','$address','$userid','$ordate')";
+mysql_query($sqlstr);
+
+//取回剛寫入orders資料表中的最後一筆序號，採用O_id由大至小排序
+$sqlstr = "select O_id from orders where userid='$userid' order by O_id desc limit 1";
+$row = mysql_fetch_row(mysql_query($sqlstr));
+
+//將購買商品資料與orders的編號寫入orderdetail資料表中	
+foreach($cart->get_contents() as $item){
+$sqlstr = "insert into orderdetail (O_id,D_pid,D_qty,D_price) values($row[0],".$item['id'].",".$item['qty'].",".$item['price'].")";	
+mysql_query($sqlstr);
+
+//扣除product資料中商品庫存
+$sqlstr = "update product set qty=(qty-".$item['qty'].") where id=".$item['id'];	
+mysql_query($sqlstr);
+}	 
+}
+function emptyCart(){
+global $cart;
+$cart->empty_cart();
+echo "<h5>訂購完成、再次謝謝您！</h5>";
+}
+?>
+----------------------------------------------------------------------------------------------
+在 <h3>非常感謝您的訂購、您所訂購的商品將在3個工作天內以貨到付款方式寄達。</h3> 之後加入：
+
+<?php
+echo writeData();
+echo emptyCart();
+?>
+
+--------我是分隔線--------我是分隔線--------我是分隔線--------
+
+
+
+checkOut.php(存檔至 Shop 資料夾中)-------------------------------------------------------------
+※使用者驗證(限制存取頁面)
+使用者名稱、密碼和存取層級：Y
+前往：index.php
+
+<h2>結帳作業</h2>
+<h3>目前網站尚未提供線上付款，如造成不便請您多多包涵！</h3>
 ----------------------------------------------------------------------------------------------
 ※插入表單/插入表格(5*2)：
 
@@ -68,7 +166,8 @@ function inputOrder(){
 ?>
 ----------------------------------------------------------------------------------------------
 <?php
-//檢查會員身份功能，在這裡使用的Session是由logincheck.php所建立
+//檢查會員身份功能，在這裡使用的Session是由 logincheck.php 所建立
+//記得回 logincheck.php 檢查 登入使用者 設定，改為 使用者名稱、密碼和存取層級，層級來源：auth
 function checkUser(){
 if(!isset($_SESSION['MM_Username'])){
 return "您尚未登入會員、請您先登入<br/>".
@@ -93,7 +192,6 @@ form1.submit(); //將表單採用原設定方式送出
 }
 }
 </script>
-----------------------------------------------------------------------------------------------
 
 2018/07/02--------我是分隔線--------我是分隔線--------我是分隔線--------
 
