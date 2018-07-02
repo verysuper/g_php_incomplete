@@ -103,6 +103,16 @@ if(!is_object($cart)) $cart = new wfCart();
 	<h3>目前網站尚未提供線上付款，如造成不便請您多多包涵！</h3>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
+    
+    <?php
+	$ret = checkUser();
+	echo "<p>".$ret."</p>";
+	if($ret == NULL){
+		inputOrder();
+	}
+	function inputOrder(){
+	?>
+    
     <form id="form1" method="post" action="purchase.php">
       <table width="90%" border="0">
         <tr>
@@ -126,10 +136,17 @@ if(!is_object($cart)) $cart = new wfCart();
           <td align="left"><input name="O_address" type="text" id="O_address" size="36" /></td>
         </tr>
         <tr>
-          <th colspan="2" align="center" scope="row"><p><button type="button" name="purchase" onclick="dataCheck()">確定結帳</button></p></th>
+          <th colspan="2" align="center" scope="row">
+          <p><button type="button" name="purchase" onclick="dataCheck()">確定結帳</button></p>
+          </th>
         </tr>
       </table>
     </form>
+    
+    <?php
+	}
+	?>
+    
     <p>&nbsp;</p>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
