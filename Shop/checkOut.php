@@ -7,52 +7,6 @@ $cart =& $_SESSION['wfcart'];
 //若$cart不為物件，重新建立一個新的$cart物件
 if(!is_object($cart)) $cart = new wfCart();
 ?>
-<?php
-if (!isset($_SESSION)) {
-  session_start();
-}
-$MM_authorizedUsers = "";
-$MM_donotCheckaccess = "true";
-
-// *** Restrict Access To Page: Grant or deny access to this page
-function isAuthorized($strUsers, $strGroups, $UserName, $UserGroup) { 
-  // For security, start by assuming the visitor is NOT authorized. 
-  $isValid = False; 
-
-  // When a visitor has logged into this site, the Session variable MM_Username set equal to their username. 
-  // Therefore, we know that a user is NOT logged in if that Session variable is blank. 
-  if (!empty($UserName)) { 
-    // Besides being logged in, you may restrict access to only certain users based on an ID established when they login. 
-    // Parse the strings into arrays. 
-    $arrUsers = Explode(",", $strUsers); 
-    $arrGroups = Explode(",", $strGroups); 
-    if (in_array($UserName, $arrUsers)) { 
-      $isValid = true; 
-    } 
-    // Or, you may restrict access to only certain users based on their username. 
-    if (in_array($UserGroup, $arrGroups)) { 
-      $isValid = true; 
-    } 
-    if (($strUsers == "") && true) { 
-      $isValid = true; 
-    } 
-  } 
-  return $isValid; 
-}
-
-$MM_restrictGoTo = "index.php?msg=結帳前，請登入";
-if (!((isset($_SESSION['MM_Username'])) && (isAuthorized("",$MM_authorizedUsers, $_SESSION['MM_Username'], $_SESSION['MM_UserGroup'])))) {   
-  $MM_qsChar = "?";
-  $MM_referrer = $_SERVER['PHP_SELF'];
-  if (strpos($MM_restrictGoTo, "?")) $MM_qsChar = "&";
-  if (isset($_SERVER['QUERY_STRING']) && strlen($_SERVER['QUERY_STRING']) > 0) 
-  $MM_referrer .= "?" . $_SERVER['QUERY_STRING'];
-  $MM_restrictGoTo = $MM_restrictGoTo. $MM_qsChar . "accesscheck=" . urlencode($MM_referrer);
-  header("Location: ". $MM_restrictGoTo); 
-  exit;
-}
-?>
-<?php session_start();?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/Shop.dwt.php" codeOutsideHTMLIsLocked="false" -->
@@ -150,36 +104,32 @@ if (!((isset($_SESSION['MM_Username'])) && (isAuthorized("",$MM_authorizedUsers,
     <p>&nbsp;</p>
     <p>&nbsp;</p>
     <form id="form1" method="post" action="purchase.php">
-<table width="90%" border="0">
-<tr>
-<th width="25%" align="right" scope="col"><p>收件人姓名:</p></th>
-<th align="left" scope="col"><label>
-<input name="O_name" type="text" id="O_name" size="10" />
-</label></th>
-</tr>
-<tr>
-<th width="25%" align="right" scope="row"><p>聯絡電話:</p></th>
-<td align="left"><label>
-<input name="O_phone" type="text" id="O_phone" size="13" />
-</label></td>
-</tr>
-<tr>
-<th width="25%" align="right" scope="row"><p>行動電話:</p></th>
-<td align="left"><input name="O_cellphone" type="text" id="O_cellphone" size="13" /></td>
-</tr>
-<tr>
-<th width="25%" align="right" scope="row"><p>收件人地址:</p></th>
-<td align="left"><input name="O_address" type="text" id="O_address" size="36" /></td>
-</tr>
-<tr>
-<th colspan="2" align="center" scope="row"><p><button type="button" name="purchase" onclick="dataCheck()">確定結帳</button></p></th>
-</tr>
-</table>
-</form>
-    <p>&nbsp;</p>
-    <p>&nbsp;</p>
-    <p>&nbsp;</p>
-    <p>&nbsp;</p>
+      <table width="90%" border="0">
+        <tr>
+          <th width="25%" align="right" scope="col"><p>收件人姓名:</p></th>
+          <th align="left" scope="col"><label>
+            <input name="O_name" type="text" id="O_name" size="10" />
+          </label></th>
+        </tr>
+        <tr>
+          <th width="25%" align="right" scope="row"><p>聯絡電話:</p></th>
+          <td align="left"><label>
+            <input name="O_phone" type="text" id="O_phone" size="13" />
+          </label></td>
+        </tr>
+        <tr>
+          <th width="25%" align="right" scope="row"><p>行動電話:</p></th>
+          <td align="left"><input name="O_cellphone" type="text" id="O_cellphone" size="13" /></td>
+        </tr>
+        <tr>
+          <th width="25%" align="right" scope="row"><p>收件人地址:</p></th>
+          <td align="left"><input name="O_address" type="text" id="O_address" size="36" /></td>
+        </tr>
+        <tr>
+          <th colspan="2" align="center" scope="row"><p><button type="button" name="purchase" onclick="dataCheck()">確定結帳</button></p></th>
+        </tr>
+      </table>
+    </form>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
@@ -244,3 +194,15 @@ if (!((isset($_SESSION['MM_Username'])) && (isAuthorized("",$MM_authorizedUsers,
     </div><!-- /footer -->
 </body>
 <!-- InstanceEnd --></html>
+<?php
+ //檢查會員身份功能，在這裡使用的Session是由logincheck.php所建立
+function checkUser(){
+	if(!isset($_SESSION['MM_Username'])){
+		return "您尚未登入會員、請您先登入<br/>".
+		       "若您尚未申請會員請先<a href=registerUser.php>加入會員</a><br/>";
+	}
+	if($_SESSION['MM_UserGroup']!="Y"){
+		return "您的會員功能尚未啟動，請至您的信箱依說明啟動您的會員功能<br/>";
+	}
+}
+?>
