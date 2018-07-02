@@ -1,4 +1,13 @@
 <?php
+require_once('../Connections/shop.php'); 
+include('../cart/wfcart.php');
+@session_start();
+//將$cart的指標指向 Session
+$cart =& $_SESSION['wfcart']; 
+//若$cart不為物件，重新建立一個新的$cart物件
+if(!is_object($cart)) $cart = new wfCart();
+?>
+<?php
 if (!isset($_SESSION)) {
   session_start();
 }
@@ -140,7 +149,33 @@ if (!((isset($_SESSION['MM_Username'])) && (isAuthorized("",$MM_authorizedUsers,
 	<h3>目前網站尚未提供線上付款，如造成不便請您多多包涵！</h3>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
-    <p>&nbsp;</p>
+    <form id="form1" method="post" action="purchase.php">
+<table width="90%" border="0">
+<tr>
+<th width="25%" align="right" scope="col"><p>收件人姓名:</p></th>
+<th align="left" scope="col"><label>
+<input name="O_name" type="text" id="O_name" size="10" />
+</label></th>
+</tr>
+<tr>
+<th width="25%" align="right" scope="row"><p>聯絡電話:</p></th>
+<td align="left"><label>
+<input name="O_phone" type="text" id="O_phone" size="13" />
+</label></td>
+</tr>
+<tr>
+<th width="25%" align="right" scope="row"><p>行動電話:</p></th>
+<td align="left"><input name="O_cellphone" type="text" id="O_cellphone" size="13" /></td>
+</tr>
+<tr>
+<th width="25%" align="right" scope="row"><p>收件人地址:</p></th>
+<td align="left"><input name="O_address" type="text" id="O_address" size="36" /></td>
+</tr>
+<tr>
+<th colspan="2" align="center" scope="row"><p><button type="button" name="purchase" onclick="dataCheck()">確定結帳</button></p></th>
+</tr>
+</table>
+</form>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
     <p>&nbsp;</p>
